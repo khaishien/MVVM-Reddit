@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">BoostTestApp</string>
+    <string name="title_error">Error!</string>
+    <string name="title_ok">OK</string>
+</resources>
