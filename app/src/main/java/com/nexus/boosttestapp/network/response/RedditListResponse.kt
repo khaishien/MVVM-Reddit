@@ -2,14 +2,11 @@ package com.nexus.boosttestapp.network.response
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.nexus.boosttestapp.model.ListData
 
-class SubredditListResponse {
-
-    @SerializedName("kind")
-    @Expose
-    val kind: String? = null
+class RedditListResponse {
 
     @SerializedName("data")
     @Expose
-    val data: BaseDataResponse? = null
+    val data: ListData? = null
 }

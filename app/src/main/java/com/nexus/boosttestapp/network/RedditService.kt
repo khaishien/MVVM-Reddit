@@ -1,17 +1,21 @@
 package com.nexus.boosttestapp.network
 
-import com.nexus.boosttestapp.network.response.SubredditListResponse
+import com.nexus.boosttestapp.network.response.RedditListResponse
 import com.nexus.boosttestapp.network.response.UpdateVoteResponse
 import retrofit2.Call
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 
 
 interface RedditService {
     @GET("hot.json")
-    fun getSubredditList(): Call<SubredditListResponse>
+    fun getHot(@Query("limit") limit: Int): Call<RedditListResponse>
+
+
+    @GET("hot.json")
+    fun getAfterHot(
+        @Query("after") after: String,
+        @Query("limit") limit: Int
+    ): Call<RedditListResponse>
 
 
     @FormUrlEncoded

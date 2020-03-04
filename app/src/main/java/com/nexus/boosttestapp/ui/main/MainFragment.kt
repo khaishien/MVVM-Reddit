@@ -3,6 +3,7 @@ package com.nexus.boosttestapp.ui.main
 import android.content.Intent
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.nexus.boosttestapp.R
 import com.nexus.boosttestapp.core.BaseFragment
 import com.nexus.boosttestapp.databinding.MainFragmentBinding
@@ -42,7 +43,7 @@ class MainFragment : BaseFragment<MainFragmentBinding, MainViewModel>() {
                 RedditClient.setHeader(authClient.getSavedBearer().getRawAccessToken()!!)
                 uiThread {
 
-                    mViewModel!!.getSubredditList()
+                    //                    mViewModel!!.getSubredditList()
                 }
             }
 
@@ -58,18 +59,21 @@ class MainFragment : BaseFragment<MainFragmentBinding, MainViewModel>() {
     override fun subscribeObserver() {
         super.subscribeObserver()
 
-        mViewModel!!.onGetSubredditData.observe(this, Observer {
-            subredditListAdapter?.notifyDataSetChanged()
+        mViewModel?.subredditData?.observe(this, Observer { pagedList ->
+            subredditListAdapter?.submitList(pagedList)
 
         })
+        mViewModel?.networkState?.observe(this, Observer { networkState ->
+            subredditListAdapter?.networkState = networkState
 
+        })
     }
 
     private fun initView() {
+        val glide = Glide.with(this)
         mBinding!!.subredditRecyclerView.layoutManager = LinearLayoutManager(context)
-        subredditListAdapter = SubredditListAdapter()
+        subredditListAdapter = SubredditListAdapter(glide)
         mBinding!!.subredditRecyclerView.adapter = subredditListAdapter
-        subredditListAdapter!!.data = mViewModel!!.subredditData
     }
 
 
