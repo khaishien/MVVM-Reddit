@@ -38,9 +38,8 @@ abstract class BaseFragment<V : ViewDataBinding, VM : BaseViewModel?> : Fragment
         return mBinding!!.root
     }
 
-    private fun subscribeObserver() {
-
-        mViewModel!!.showErrorEvent.observe(this,
+    protected open fun subscribeObserver() {
+        mViewModel!!.showErrorEvent.observe(viewLifecycleOwner,
             Observer { message: String? ->
                 showErrorMessage(
                     context,

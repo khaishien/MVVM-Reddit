@@ -1,14 +1,14 @@
-package com.nexus.boosttestapp.ui
+package com.nexus.boosttestapp.ui.main
 
 import com.nexus.boosttestapp.R
 import com.nexus.boosttestapp.core.BaseActivity
-import com.nexus.boosttestapp.databinding.MainActivityBinding
+import com.nexus.boosttestapp.databinding.BaseActivityBinding
 
-class MainActivity : BaseActivity<MainActivityBinding, MainViewModel>() {
+class MainActivity : BaseActivity<BaseActivityBinding, MainViewModel>() {
     override val viewModelClass: Class<MainViewModel>
         get() = MainViewModel::class.java
     override val layout: Int
-        get() = R.layout.main_activity
+        get() = R.layout.base_activity
 
     override fun onInit() {
 
@@ -16,7 +16,10 @@ class MainActivity : BaseActivity<MainActivityBinding, MainViewModel>() {
 
     override fun onFragment() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.container, MainFragment.newInstance())
+            .replace(
+                R.id.container,
+                MainFragment.newInstance()
+            )
             .commitNow()
     }
 
