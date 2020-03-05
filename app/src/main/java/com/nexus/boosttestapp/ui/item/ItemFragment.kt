@@ -1,8 +1,11 @@
 package com.nexus.boosttestapp.ui.item
 
+import android.view.View
+import androidx.lifecycle.Observer
 import com.nexus.boosttestapp.R
 import com.nexus.boosttestapp.core.BaseFragment
 import com.nexus.boosttestapp.databinding.ItemFragmentBinding
+import com.nexus.boosttestapp.model.Subreddit
 import com.nexus.boosttestapp.utils.DateUtils
 
 class ItemFragment : BaseFragment<ItemFragmentBinding, ItemViewModel>() {
@@ -18,24 +21,36 @@ class ItemFragment : BaseFragment<ItemFragmentBinding, ItemViewModel>() {
         get() = R.layout.item_fragment
 
     override fun onInit() {
-        initView()
+        mBinding!!.progressIndicator.visibility = View.VISIBLE
+        mBinding!!.itemLayout.visibility = View.GONE
     }
 
+    override fun subscribeObserver() {
+        super.subscribeObserver()
 
-    private fun initView() {
+        mViewModel!!.onGetSubredditEvent.observe(this, Observer { data ->
+            updateView(data)
+        })
+    }
 
-        val data = mViewModel!!.subreddit
-        //temp remove image to display
-//        if (!data!!.thumbnail.isNullOrEmpty() && data.thumbnail != "self") {
-//            mBinding!!.ivIcon.visibility = View.VISIBLE
-//            Glide.with(this).load(data.thumbnail).into(mBinding!!.ivIcon)
+    private fun updateView(data: Subreddit) {
+        mBinding!!.progressIndicator.visibility = View.GONE
+        mBinding!!.itemLayout.visibility = View.VISIBLE
+
+        //temp remove preview
+//        if (data.preview?.images != null && data.preview?.images?.size!! > 0) {
+//            mBinding!!.ivPreview.visibility = View.VISIBLE
+//            Glide.with(this).load(data.preview?.images?.get(0)?.source?.url)
+//                .into(mBinding!!.ivPreview)
 //        } else {
-//            mBinding!!.ivIcon.visibility = View.GONE
+//            mBinding!!.ivPreview.visibility = View.GONE
 //        }
 
-        mBinding!!.tvTitle.text = data!!.title
+
+        mBinding!!.tvTitle.text = data.title
         mBinding!!.tvDesc.text =
-            "created at ${DateUtils.formatDateFromLong(data.created)} by ${data.author}"
+            "created at ${DateUtils.formatDateFromUnix(data.created)} by ${data.author}"
+        mBinding!!.tvComments.text = "${data.numComments} comments"
 
         mBinding!!.tvVoteCount.text = data.score.toString()
 

@@ -73,7 +73,7 @@ class SubredditListAdapter(
             }
             binding.tvTitle.text = titleString
             binding.tvDesc.text =
-                "created at ${DateUtils.formatDateFromLong(data.created)} by ${data.author} to ${data.subredditNamePrefixed}"
+                "created at ${DateUtils.formatDateFromUnix(data.created)} by ${data.author} to ${data.subredditNamePrefixed}"
 
             binding.tvVoteCount.text = data.score.toString()
 

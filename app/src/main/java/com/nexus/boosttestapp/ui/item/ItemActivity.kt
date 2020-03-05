@@ -2,21 +2,21 @@ package com.nexus.boosttestapp.ui.item
 
 import android.app.Activity
 import android.content.Intent
+import androidx.lifecycle.Observer
 import com.nexus.boosttestapp.R
 import com.nexus.boosttestapp.core.BaseActivity
 import com.nexus.boosttestapp.databinding.BaseActivityBinding
-import com.nexus.boosttestapp.model.Subreddit
 
 
 class ItemActivity : BaseActivity<BaseActivityBinding, ItemViewModel>() {
 
 
     companion object {
-        private val DATA = "DATA"
-        fun start(activity: Activity, subreddit: Subreddit) {
+        private val THING_ID = "THING_ID"
+        fun start(activity: Activity, thingId: String) {
 
             val intent = Intent(activity, ItemActivity::class.java)
-            intent.putExtra(DATA, subreddit)
+            intent.putExtra(THING_ID, thingId)
             activity.startActivity(intent)
         }
     }
@@ -38,14 +38,20 @@ class ItemActivity : BaseActivity<BaseActivityBinding, ItemViewModel>() {
     override fun onInit() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
-
-        if (intent.hasExtra(DATA)) {
-            mViewModel!!.subreddit = intent.getParcelableExtra(DATA)
-            supportActionBar?.title = mViewModel!!.subreddit?.subredditNamePrefixed
-
+        supportActionBar?.title = ""
+        subscribeObserver()
+        if (intent.hasExtra(THING_ID)) {
+            var thingId = intent.getStringExtra(THING_ID)
+            mViewModel!!.getSubreddit(thingId)
         }
 
 
+    }
+
+    private fun subscribeObserver() {
+        mViewModel!!.onUpdateTitleEvent.observe(this, Observer { title ->
+            supportActionBar?.title = title
+        })
     }
 
 }

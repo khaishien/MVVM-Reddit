@@ -72,9 +72,6 @@ class MainFragment : BaseFragment<MainFragmentBinding, MainViewModel>() {
             subredditListAdapter!!.deductUpVote(thingId)
         })
 
-        mViewModel!!.onGetSubredditEvent.observe(this, Observer { subreddit ->
-            ItemActivity.start(activity!!, subreddit)
-        })
     }
 
     //ui binding
@@ -92,7 +89,7 @@ class MainFragment : BaseFragment<MainFragmentBinding, MainViewModel>() {
                 }
 
                 override fun onClick(thingId: String) {
-                    mViewModel!!.getSubreddit(thingId)
+                    ItemActivity.start(activity!!, thingId)
                 }
             })
         mBinding!!.subredditRecyclerView.adapter = subredditListAdapter

@@ -8,10 +8,8 @@ import androidx.paging.PagedList
 import com.nexus.boosttestapp.core.BaseViewModel
 import com.nexus.boosttestapp.data.RedditDataFactory
 import com.nexus.boosttestapp.data.RedditDataSource
-import com.nexus.boosttestapp.model.Subreddit
 import com.nexus.boosttestapp.model.SubredditData
 import com.nexus.boosttestapp.network.RedditClient
-import com.nexus.boosttestapp.network.response.RedditListResponse
 import com.nexus.boosttestapp.network.response.UpdateVoteResponse
 import com.nexus.boosttestapp.utils.NetworkState
 import com.nexus.boosttestapp.utils.SingleLiveEvent
@@ -31,7 +29,6 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     var subredditData: LiveData<PagedList<SubredditData>>? = null
 
 
-    val onGetSubredditEvent: SingleLiveEvent<Subreddit> = SingleLiveEvent()
     val onFailedUpVoteEvent: SingleLiveEvent<String> = SingleLiveEvent()
     val onFailedDownVoteEvent: SingleLiveEvent<String> = SingleLiveEvent()
 
@@ -104,30 +101,4 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             })
     }
 
-    fun getSubreddit(thingId: String) {
-        if (thingId.isNullOrEmpty()) {
-            return
-        }
-
-        RedditClient.redditService.getSubreddit(thingId)
-            .enqueue(object : Callback<RedditListResponse> {
-                override fun onFailure(call: Call<RedditListResponse>, t: Throwable) {
-                }
-
-                override fun onResponse(
-                    call: Call<RedditListResponse>,
-                    response: Response<RedditListResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        var body = response.body()
-
-                        if (body!!.data?.children?.size!! > 0) {
-                            var subreddit = body!!.data?.children?.get(0)
-                            onGetSubredditEvent.value = subreddit?.data
-                        }
-                    }
-                }
-
-            })
-    }
 }
