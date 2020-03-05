@@ -13,6 +13,7 @@ import com.nexus.boosttestapp.network.RedditClient
 import com.nexus.boosttestapp.ui.item.ItemActivity
 import com.nexus.boosttestapp.ui.login.LoginActivity
 import com.nexus.boosttestapp.ui.newitem.NewItemActivity
+import com.nexus.boosttestapp.utils.NetworkState
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
@@ -39,9 +40,10 @@ class MainFragment : BaseFragment<MainFragmentBinding, MainViewModel>() {
 
         val authClient = RedditAuthClient.getRedditService(context!!)
         if (authClient.hasSavedBearer()) {
-            Log.d("TOKEN", authClient.getSavedBearer().getRawAccessToken()!!)
             doAsync {
-                RedditClient.setHeader(authClient.getSavedBearer().getRawAccessToken()!!)
+                var token = authClient.getSavedBearer().getRawAccessToken()!!
+                Log.d("TOKEN", token)
+                RedditClient.setHeader(token)
                 uiThread {
                     //                    mViewModel!!.getSubredditList()
                 }
@@ -101,6 +103,15 @@ class MainFragment : BaseFragment<MainFragmentBinding, MainViewModel>() {
 
         mBinding!!.fabAdd.setOnClickListener {
             NewItemActivity.start(activity!!)
+        }
+
+        mViewModel!!.refreshState?.observe(this, Observer {
+
+            mBinding!!.swipeRefresh.isRefreshing = it == NetworkState.LOADING
+        })
+
+        mBinding!!.swipeRefresh.setOnRefreshListener {
+            mViewModel!!.refresh()
         }
     }
 

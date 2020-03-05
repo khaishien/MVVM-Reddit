@@ -24,8 +24,10 @@ import java.util.concurrent.Executors
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
 
+    private var redditDataFactory: RedditDataFactory = RedditDataFactory()
     private var executor: Executor = Executors.newFixedThreadPool(5)
     var networkState: LiveData<NetworkState>? = null
+    var refreshState: LiveData<NetworkState>? = null
     var subredditData: LiveData<PagedList<SubredditData>>? = null
 
 
@@ -35,10 +37,14 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
 
     init {
-        var redditDataFactory = RedditDataFactory()
         networkState = Transformations.switchMap(
             redditDataFactory.mutableLiveData!!
         ) { dataSource: RedditDataSource -> dataSource.networkState }
+
+        refreshState = Transformations.switchMap(
+            redditDataFactory.mutableLiveData!!
+        ) { dataSource: RedditDataSource -> dataSource.initialLoading }
+
         val pagedListConfig = PagedList.Config.Builder()
             .setEnablePlaceholders(false)
             .setInitialLoadSizeHint(10)
@@ -49,6 +55,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 .build()
     }
 
+    fun refresh() {
+        redditDataFactory.redditDataSource?.invalidate()
+    }
 
     fun upvote(thingId: String) {
         if (thingId.isNullOrEmpty()) {

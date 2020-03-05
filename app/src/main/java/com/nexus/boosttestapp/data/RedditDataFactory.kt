@@ -5,7 +5,7 @@ import androidx.paging.DataSource
 import com.nexus.boosttestapp.model.SubredditData
 
 
-class RedditDataFactory() : DataSource.Factory<String, SubredditData>() {
+class RedditDataFactory : DataSource.Factory<String, SubredditData>() {
 
 
      var mutableLiveData: MutableLiveData<RedditDataSource>? = null
