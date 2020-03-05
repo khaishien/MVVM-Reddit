@@ -8,10 +8,13 @@ import androidx.paging.PagedList
 import com.nexus.boosttestapp.core.BaseViewModel
 import com.nexus.boosttestapp.data.RedditDataFactory
 import com.nexus.boosttestapp.data.RedditDataSource
+import com.nexus.boosttestapp.model.Subreddit
 import com.nexus.boosttestapp.model.SubredditData
 import com.nexus.boosttestapp.network.RedditClient
+import com.nexus.boosttestapp.network.response.RedditListResponse
 import com.nexus.boosttestapp.network.response.UpdateVoteResponse
 import com.nexus.boosttestapp.utils.NetworkState
+import com.nexus.boosttestapp.utils.SingleLiveEvent
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,6 +27,12 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     private var executor: Executor = Executors.newFixedThreadPool(5)
     var networkState: LiveData<NetworkState>? = null
     var subredditData: LiveData<PagedList<SubredditData>>? = null
+
+
+    val onGetSubredditEvent: SingleLiveEvent<Subreddit> = SingleLiveEvent()
+    val onFailedUpVoteEvent: SingleLiveEvent<String> = SingleLiveEvent()
+    val onFailedDownVoteEvent: SingleLiveEvent<String> = SingleLiveEvent()
+
 
     init {
         var redditDataFactory = RedditDataFactory()
@@ -41,19 +50,73 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
 
 
-    fun vote() {
-        RedditClient.redditService.updateVote("1", "t5_2qh1i")
+    fun upvote(thingId: String) {
+        if (thingId.isNullOrEmpty()) {
+            return
+        }
+        RedditClient.redditService.updateVote("1", thingId)
             .enqueue(object : Callback<UpdateVoteResponse> {
                 override fun onFailure(
                     call: Call<UpdateVoteResponse>,
                     t: Throwable
                 ) {
+                    onFailedUpVoteEvent.value = thingId
                 }
 
                 override fun onResponse(
                     call: Call<UpdateVoteResponse>,
                     response: Response<UpdateVoteResponse>
                 ) {
+                }
+
+            })
+    }
+
+
+    fun downvote(thingId: String) {
+        if (thingId.isNullOrEmpty()) {
+            return
+        }
+        RedditClient.redditService.updateVote("-1", thingId)
+            .enqueue(object : Callback<UpdateVoteResponse> {
+                override fun onFailure(
+                    call: Call<UpdateVoteResponse>,
+                    t: Throwable
+                ) {
+                    onFailedDownVoteEvent.value = thingId
+                }
+
+                override fun onResponse(
+                    call: Call<UpdateVoteResponse>,
+                    response: Response<UpdateVoteResponse>
+                ) {
+                }
+
+            })
+    }
+
+    fun getSubreddit(thingId: String) {
+        if (thingId.isNullOrEmpty()) {
+            return
+        }
+
+        RedditClient.redditService.getSubreddit(thingId)
+            .enqueue(object : Callback<RedditListResponse> {
+                override fun onFailure(call: Call<RedditListResponse>, t: Throwable) {
+                }
+
+                override fun onResponse(
+                    call: Call<RedditListResponse>,
+                    response: Response<RedditListResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        var body = response.body()
+
+                        if (body!!.data?.children?.size!! > 0) {
+                            var subreddit = body!!.data?.children?.get(0)
+                            onGetSubredditEvent.value = subreddit?.data
+                        }
+                    }
                 }
 
             })

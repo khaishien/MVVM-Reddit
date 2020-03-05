@@ -1,6 +1,5 @@
 package com.nexus.boosttestapp.ui.main
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,8 +17,17 @@ import com.nexus.boosttestapp.utils.NetworkState
 import com.nexus.boosttestapp.utils.Status
 
 
-class SubredditListAdapter(private val glide: RequestManager) :
+class SubredditListAdapter(
+    private val glide: RequestManager,
+    private val onCallback: OnCallback
+) :
     PagedListAdapter<SubredditData, RecyclerView.ViewHolder>(POST_COMPARATOR) {
+
+    interface OnCallback {
+        fun onClick(thingId: String)
+        fun onUpVote(thingId: String)
+        fun onDownVote(thingId: String)
+    }
 
     private val TYPE_PROGRESS = 0
     private val TYPE_ITEM = 1
@@ -45,7 +53,11 @@ class SubredditListAdapter(private val glide: RequestManager) :
 
     }
 
-    class ViewHolder(private val binding: ItemSubredditBinding, private val glide: RequestManager) :
+    class ViewHolder(
+        private val binding: ItemSubredditBinding,
+        private val glide: RequestManager,
+        private val onCallback: OnCallback
+    ) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun setData(subredditData: SubredditData) {
@@ -65,22 +77,39 @@ class SubredditListAdapter(private val glide: RequestManager) :
 
             binding.tvVoteCount.text = data.score.toString()
 
-            binding.ibUpvote.setOnClickListener { }
-            binding.ibDownvote.setOnClickListener { }
+            binding.ibUpvote.setOnClickListener {
+                onCallback.onUpVote(data.thingsId!!)
+                data.score = data.score!!.plus(1)
+                binding.tvVoteCount.text = data.score.toString()
+            }
+            binding.ibDownvote.setOnClickListener {
+                onCallback.onDownVote(data.thingsId!!)
+                data.score = data.score!!.minus(1)
+                binding.tvVoteCount.text = data.score.toString()
+            }
+            binding.layout.setOnClickListener {
+                onCallback.onClick(data.thingsId!!)
+            }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    fun deductUpVote(thingId: String) {
+        val found = currentList!!.find { it.data?.thingsId == thingId }
+        val index = currentList!!.indexOf(found)
+        found!!.data?.score = found.data?.score?.minus(1)
+        notifyItemChanged(index)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
         return when (viewType) {
-            TYPE_PROGRESS -> ViewHolder(
+            TYPE_PROGRESS -> NetworkStateItemViewHolder(
                 DataBindingUtil.inflate(
                     LayoutInflater.from(parent.context),
-                    R.layout.item_subreddit,
+                    R.layout.item_network,
                     parent,
                     false
-                ),
-                this.glide
+                )
             )
             else -> ViewHolder(
                 DataBindingUtil.inflate(
@@ -89,7 +118,8 @@ class SubredditListAdapter(private val glide: RequestManager) :
                     parent,
                     false
                 ),
-                this.glide
+                this.glide,
+                this.onCallback
             )
         }
     }
