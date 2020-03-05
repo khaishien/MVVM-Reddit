@@ -20,9 +20,11 @@ android {
     buildTypes {
         debug {
             buildConfigField 'String', 'BASE_URL', '"https://oauth.reddit.com/"'
+            buildConfigField 'String', 'REDDIT_CLIENT_ID', '"mu9OHxOj1IdRxA"'
         }
         release {
             buildConfigField 'String', 'BASE_URL', '"https://oauth.reddit.com/"'
+            buildConfigField 'String', 'REDDIT_CLIENT_ID', '"mu9OHxOj1IdRxA"'
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

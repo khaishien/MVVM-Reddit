@@ -25,12 +25,15 @@ class LoginFragment : BaseFragment<LoginFragmentBinding, LoginViewModel>() {
         get() = R.layout.login_fragment
 
     override fun onInit() {
+
+        // ui binding
         mBinding!!.loginButton.visibility = View.VISIBLE
         mBinding!!.loginButton.setOnClickListener {
             redditLogin()
         }
     }
 
+    //login reddit using RedditAuthClient
     private fun redditLogin() {
 
         var authClient = RedditAuthClient.getRedditService(context!!)

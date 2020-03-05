@@ -60,8 +60,8 @@ class NewItemFragment : BaseFragment<NewItemFragmentBinding, NewItemViewModel>()
         if (title.isEmpty()) {
             return "Title is required!"
         }
-        if (title.length > 300) {
-            return "Title cannot more than 300!"
+        if (title.length > 255) {
+            return "Title cannot more than 255!"
         }
         return null
     }

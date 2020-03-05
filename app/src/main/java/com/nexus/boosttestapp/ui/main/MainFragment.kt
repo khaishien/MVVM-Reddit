@@ -15,7 +15,6 @@ import com.nexus.boosttestapp.ui.login.LoginActivity
 import com.nexus.boosttestapp.ui.newitem.NewItemActivity
 import com.nexus.boosttestapp.utils.NetworkState
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 
 
 class MainFragment : BaseFragment<MainFragmentBinding, MainViewModel>() {
@@ -38,26 +37,22 @@ class MainFragment : BaseFragment<MainFragmentBinding, MainViewModel>() {
     override fun onResume() {
         super.onResume()
 
+        //check reddit auth state and force user login if needed
         val authClient = RedditAuthClient.getRedditService(context!!)
         if (authClient.hasSavedBearer()) {
             doAsync {
                 var token = authClient.getSavedBearer().getRawAccessToken()!!
                 Log.d("TOKEN", token)
                 RedditClient.setHeader(token)
-                uiThread {
-                    //                    mViewModel!!.getSubredditList()
-                }
             }
-
-
         } else {
-
             val intent = Intent(activity, LoginActivity::class.java)
             startActivity(intent)
         }
 
     }
 
+    //listen livedata observer
     override fun subscribeObserver() {
         super.subscribeObserver()
 
@@ -82,6 +77,7 @@ class MainFragment : BaseFragment<MainFragmentBinding, MainViewModel>() {
         })
     }
 
+    //ui binding
     private fun initView() {
         val glide = Glide.with(this)
         mBinding!!.subredditRecyclerView.layoutManager = LinearLayoutManager(context)

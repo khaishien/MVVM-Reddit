@@ -25,6 +25,7 @@ class ItemFragment : BaseFragment<ItemFragmentBinding, ItemViewModel>() {
     private fun initView() {
 
         val data = mViewModel!!.subreddit
+        //temp remove image to display
 //        if (!data!!.thumbnail.isNullOrEmpty() && data.thumbnail != "self") {
 //            mBinding!!.ivIcon.visibility = View.VISIBLE
 //            Glide.with(this).load(data.thumbnail).into(mBinding!!.ivIcon)
@@ -32,11 +33,7 @@ class ItemFragment : BaseFragment<ItemFragmentBinding, ItemViewModel>() {
 //            mBinding!!.ivIcon.visibility = View.GONE
 //        }
 
-        var titleString = data!!.title ?: ""
-        if (titleString.length > 255) {
-            titleString = titleString.substring(0, 255) + " ... "
-        }
-        mBinding!!.tvTitle.text = titleString
+        mBinding!!.tvTitle.text = data!!.title
         mBinding!!.tvDesc.text =
             "created at ${DateUtils.formatDateFromLong(data.created)} by ${data.author}"
 

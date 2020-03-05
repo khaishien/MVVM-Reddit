@@ -12,11 +12,15 @@ import retrofit2.Response
 
 class ItemViewModel(application: Application) : BaseViewModel(application) {
 
+    //in memory data share between fragment and activity
     var subreddit: Subreddit? = null
+
+    // liveData to notify event
     val onFailedUpVoteEvent: SingleLiveEvent<String> = SingleLiveEvent()
     val onFailedDownVoteEvent: SingleLiveEvent<String> = SingleLiveEvent()
 
 
+    // function to up vote sr
     fun upvote(thingId: String) {
         if (thingId.isNullOrEmpty()) {
             return
@@ -39,7 +43,7 @@ class ItemViewModel(application: Application) : BaseViewModel(application) {
             })
     }
 
-
+    // function to down vote sr
     fun downvote(thingId: String) {
         if (thingId.isNullOrEmpty()) {
             return

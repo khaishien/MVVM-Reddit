@@ -24,6 +24,7 @@ class LoginActivity : BaseActivity<BaseActivityBinding, LoginViewModel>() {
 
     }
 
+    //remove back action for this activity, due to other action in this app required auth
     override fun onBackPressed() {
 
     }
