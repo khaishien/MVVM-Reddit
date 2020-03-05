@@ -25,8 +25,10 @@ interface RedditService {
     @FormUrlEncoded
     @POST("api/submit")
     fun submitLink(
-        @Field("title") text: String,
-        @Field("kind") kind: String
+        @Field("title") title: String,
+        @Field("text") text: String,
+        @Field("kind") kind: String,
+        @Field("submit_type") submitType: String
     ): Call<UpdateVoteResponse>
 
     @FormUrlEncoded

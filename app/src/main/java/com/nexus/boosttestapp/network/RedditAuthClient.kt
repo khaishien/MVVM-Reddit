@@ -11,7 +11,7 @@ object RedditAuthClient {
         if (mService == null) {
             mService = RedditAuth.Builder()
                 .setCredentials("mu9OHxOj1IdRxA", "http://127.0.0.1")
-                .setScopes(arrayOf("read", "vote"))
+                .setScopes(arrayOf("read", "vote", "submit"))
                 .setStorageManager(SharedPrefsStorageManager(context))
                 .setLogging(true)
                 .build()
